@@ -502,7 +502,7 @@ body {
     color: var(--ink);
     box-shadow:
         0 0 0 1px var(--paper),
-        0 2px 5px color-mix(in srgb, var(--ink) 28%, transparent);
+        0 2px 5px color-mix(in srgb, var(--ink) 32%, transparent);
     font: inherit;
     font-size: 12px;
     font-weight: 600;
@@ -749,6 +749,7 @@ body {
     font-size: 12px;
     font-weight: 600;
     line-height: 1.5;
+    text-align: center;
     cursor: pointer;
 }
 
@@ -945,6 +946,45 @@ html.v3d-locked body {
 
     .v3d.is-full .v3d-rooms {
         padding: 10px;
+    }
+}
+
+/* Только 6+ вариантов: ровная сетка, полные подписи и компактные изображения. */
+.v3d-variants:has(> .v3d-variant:nth-child(6)) {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.v3d-variants:has(> .v3d-variant:nth-child(6)) > .v3d-variant {
+    grid-column: auto;
+    gap: 4px;
+    min-height: 44px;
+    font-size: 10px;
+    line-height: 12px;
+    white-space: normal;
+}
+
+.v3d-variants:has(> .v3d-variant:nth-child(6)) > .v3d-variant > span {
+    min-width: 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+}
+
+.apartment .v3d-variants:has(> .v3d-variant:nth-child(6)) > .v3d-variant > img {
+    height: 26px;
+}
+
+@container (min-width: 700px) {
+    .apartment .v3d-card:has(.v3d-variant:nth-child(6)) .v3d-photo {
+        max-height: 64px;
+        object-fit: contain;
+    }
+}
+
+@container (max-width: 699px) {
+    .v3d-card:has(.v3d-variant:nth-child(6)) {
+        max-height: 50%;
     }
 }
 
@@ -1202,6 +1242,11 @@ html.v3d-locked body {
 @media (prefers-reduced-motion: reduce) {
     .swap-drum, .swap-outline, .swap-ticks i, .swap-opt { transition: none !important; }
 }
+
+/* v2: подписи барабана вида «DD-5832 · коньяк» — окно по самой широкой подписи, подпись в одну строку. */
+.swap-drum-win { display: grid; width: auto; min-width: 54px; }
+.swap-drum-size { grid-area: 1 / 1; visibility: hidden; padding: 0 2px; font-size: 11px; font-weight: 600; letter-spacing: .06em; line-height: 18px; white-space: nowrap; }
+.swap-face { white-space: nowrap; }
 </style>
 <main class="apartment" lang="ru">
 <p class="mobile-note">Чтобы рассмотреть всё в деталях, лучше открыть страницу с компьютера. На телефоне откройте её в Chrome или Safari и включите «Версию для ПК» в меню браузера.</p>
@@ -1326,15 +1371,15 @@ html.v3d-locked body {
     </div>
 </section>
 
-<section class="block"><h2>План расстановки</h2><div class="plan-layout"><img src="img/plan_marked.jpg" alt="План расстановки" width="1600" height="951"><ul class="plan-key"><li><span class="number">1</span><span>Диван</span></li><li><span class="number">2</span><span>ТВ-тумба</span></li><li><span class="number">3</span><span>Обеденный стол</span></li><li><span class="number">4</span><span>Обеденный стул</span></li><li><span class="number">5</span><span>Кровать</span></li><li><span class="number">6</span><span>Прикроватная тумба</span></li><li><span class="number">7</span><span>Туалетный столик</span></li><li><span class="number">8</span><span>Кровать</span></li><li><span class="number">9</span><span>Письменный стол</span></li><li><span class="number">10</span><span>Стул к письменному столу</span></li></ul></div><p class="note">Стены, полы, шторы, ковры и декор нарисованы для примера. Наша мебель только та, что отмечена.</p></section>
-<section class="block"><h2>Гостиная</h2><figure class="room-figure"><img src="img/living_sofa.marked.jpg" alt="Гостиная" width="1600" height="1067" data-marked="img/living_sofa.marked.jpg" data-clean="img/living_sofa.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">1</span><span>Диван</span></li><li><span class="number">2</span><span>ТВ-тумба</span></li></ul></figcaption></figure><figure class="room-figure"><img src="img/living_tv.marked.jpg" alt="Гостиная" width="1600" height="1067" data-marked="img/living_tv.marked.jpg" data-clean="img/living_tv.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">1</span><span>Диван</span></li><li><span class="number">2</span><span>ТВ-тумба</span></li></ul></figcaption></figure></section>
-<section class="block"><h2>Столовая и кухня</h2><figure class="room-figure"><img src="img/dining_kitchen.marked.jpg" alt="Столовая и кухня" width="1600" height="1067" data-marked="img/dining_kitchen.marked.jpg" data-clean="img/dining_kitchen.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">3</span><span>Обеденный стол</span></li><li><span class="number">4</span><span>Обеденный стул</span></li></ul></figcaption></figure></section>
-<section class="block"><h2>Спальня</h2><figure class="room-figure"><img src="img/bedroom_bed.marked.jpg" alt="Спальня" width="1600" height="1067" data-marked="img/bedroom_bed.marked.jpg" data-clean="img/bedroom_bed.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">5</span><span>Кровать</span></li><li><span class="number">6</span><span>Прикроватная тумба</span></li><li><span class="number">7</span><span>Туалетный столик</span></li></ul></figcaption></figure><figure class="room-figure"><img src="img/bedroom_vanity.marked.jpg" alt="Спальня" width="1600" height="1067" data-marked="img/bedroom_vanity.marked.jpg" data-clean="img/bedroom_vanity.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">5</span><span>Кровать</span></li><li><span class="number">7</span><span>Туалетный столик</span></li></ul></figcaption></figure></section>
+<section class="block"><h2>План расстановки</h2><div class="plan-layout"><img src="img/plan_marked.jpg" alt="План расстановки" width="1600" height="951"><ul class="plan-key"><li><span class="number">1</span><span>Диван-кровать Alberta Togo</span></li><li><span class="number">2</span><span>ТВ-тумба</span></li><li><span class="number">3</span><span>Обеденный стол Cattelan Pedro Drive</span></li><li><span class="number">4</span><span>Обеденный стул</span></li><li><span class="number">5</span><span>Кровать Désirée Vanity</span></li><li><span class="number">6</span><span>Прикроватная тумба</span></li><li><span class="number">7</span><span>Туалетный столик</span></li><li><span class="number">8</span><span>Кровать</span></li><li><span class="number">9</span><span>Письменный стол</span></li><li><span class="number">10</span><span>Стул к письменному столу</span></li></ul></div><p class="note">Стены, полы, шторы, ковры и декор нарисованы для примера. Наша мебель только та, что отмечена.</p></section>
+<section class="block"><h2>Гостиная</h2><figure class="room-figure"><img src="img/living_sofa.marked.jpg" alt="Гостиная" width="1600" height="1067" data-marked="img/living_sofa.marked.jpg" data-clean="img/living_sofa.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">1</span><span>Диван-кровать Alberta Togo</span></li><li><span class="number">2</span><span>ТВ-тумба</span></li></ul></figcaption></figure><figure class="room-figure"><img src="img/living_tv.marked.jpg" alt="Гостиная" width="1600" height="1067" data-marked="img/living_tv.marked.jpg" data-clean="img/living_tv.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">1</span><span>Диван-кровать Alberta Togo</span></li><li><span class="number">2</span><span>ТВ-тумба</span></li></ul></figcaption></figure></section>
+<section class="block"><h2>Столовая и кухня</h2><figure class="room-figure"><img src="img/dining_kitchen.marked.jpg" alt="Столовая и кухня" width="1600" height="1067" data-marked="img/dining_kitchen.marked.jpg" data-clean="img/dining_kitchen.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">3</span><span>Обеденный стол Cattelan Pedro Drive</span></li><li><span class="number">4</span><span>Обеденный стул</span></li></ul></figcaption></figure></section>
+<section class="block"><h2>Спальня</h2><figure class="room-figure"><img src="img/bedroom_bed.marked.jpg" alt="Спальня" width="1600" height="1067" data-marked="img/bedroom_bed.marked.jpg" data-clean="img/bedroom_bed.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">5</span><span>Кровать Désirée Vanity</span></li><li><span class="number">6</span><span>Прикроватная тумба</span></li><li><span class="number">7</span><span>Туалетный столик</span></li></ul></figcaption></figure><figure class="room-figure"><img src="img/bedroom_vanity.marked.jpg" alt="Спальня" width="1600" height="1067" data-marked="img/bedroom_vanity.marked.jpg" data-clean="img/bedroom_vanity.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">5</span><span>Кровать Désirée Vanity</span></li><li><span class="number">7</span><span>Туалетный столик</span></li></ul></figcaption></figure></section>
 <section class="block"><h2>Вторая комната</h2><figure class="room-figure"><img src="img/room2_bed.marked.jpg" alt="Вторая комната" width="1600" height="1067" data-marked="img/room2_bed.marked.jpg" data-clean="img/room2_bed.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">8</span><span>Кровать</span></li></ul></figcaption></figure><figure class="room-figure"><img src="img/room2_desk.marked.jpg" alt="Вторая комната" width="1600" height="1067" data-marked="img/room2_desk.marked.jpg" data-clean="img/room2_desk.clean.jpg"><figcaption><ul class="room-key"><li><span class="number">9</span><span>Письменный стол</span></li><li><span class="number">10</span><span>Стул к письменному столу</span></li></ul></figcaption></figure></section>
 <section class="block"><h2>Прихожая</h2><figure class="room-figure"><img src="img/hall.clean.jpg" alt="Прихожая" width="1600" height="1067"></figure></section>
 <section class="block"><h2>Ванная</h2><figure class="room-figure"><img src="img/bath.clean.jpg" alt="Ванная" width="1600" height="1067"></figure></section>
 
-<section class="block"><h2>Список мебели</h2><div class="catalog-stack"><section class="catalog-group"><h3>Гостиная</h3><div class="products"><article class="product"><img src="img/item-1.jpg" alt="Диван" width="700" height="356" class="product-photo"><h4><span class="number">1</span><span>Диван</span></h4><p class="product-code">PL-016</p><p class="product-size">180 × 112 × 76 см</p></article><article class="product"><img src="img/item-2.jpg" alt="ТВ-тумба" width="700" height="155" class="product-photo"><h4><span class="number">2</span><span>ТВ-тумба</span></h4><p class="product-code">DD-7479</p><p class="product-size">229 × 54 × 35 см</p></article></div></section><section class="catalog-group"><h3>Столовая</h3><div class="products"><article class="product"><img src="img/item-3.jpg" alt="Обеденный стол" width="700" height="568" class="product-photo"><h4><span class="number">3</span><span>Обеденный стол</span></h4><p class="product-code">DD-8920</p><p class="product-size">85 × 85 × 75 см, раздвижной, раскрытый Ø 116 см</p></article><article class="product"><img src="img/item-4.jpg" alt="Обеденный стул" width="300" height="450" class="product-photo"><h4><span class="number">4</span><span>Обеденный стул</span></h4><p class="product-code">DN-077</p><p class="product-size">50 × 54,5 × 80 см</p></article></div></section><section class="catalog-group"><h3>Спальня</h3><div class="products"><article class="product"><img src="img/item-5.jpg" alt="Кровать" width="700" height="496" class="product-photo"><h4><span class="number">5</span><span>Кровать</span></h4><p class="product-code">PB-015</p><p class="product-size">162 × 213 × 120 см</p></article><article class="product"><img src="img/item-6.jpg" alt="Прикроватная тумба" width="455" height="460" class="product-photo"><h4><span class="number">6</span><span>Прикроватная тумба</span></h4><p class="product-code">PB-222</p><p class="product-size">54 × 40 × 51 см</p></article><article class="product"><img src="img/item-7.jpg" alt="Туалетный столик" width="410" height="460" class="product-photo"><h4><span class="number">7</span><span>Туалетный столик</span></h4><p class="product-code">PB-174</p><p class="product-size">120 × 47 × 78 см, с зеркалом и пуфом</p></article></div></section><section class="catalog-group"><h3>Вторая комната</h3><div class="products"><article class="product"><img src="img/item-8.jpg" alt="Кровать" width="416" height="184" class="product-photo"><h4><span class="number">8</span><span>Кровать</span></h4><p class="product-code">DD-5832</p><p class="product-size">97 × 196 × 36 см, с ящиком для белья, под матрас 90 × 190</p></article><article class="product"><img src="img/item-9.jpg" alt="Письменный стол" width="631" height="429" class="product-photo"><h4><span class="number">9</span><span>Письменный стол</span></h4><p class="product-code">DD-2919</p><p class="product-size">120 × 55 × 75 см</p></article><article class="product"><img src="img/item-10.jpg" alt="Стул к письменному столу" width="557" height="597" class="product-photo"><h4><span class="number">10</span><span>Стул к письменному столу</span></h4><p class="product-code">AR-065</p><p class="product-size">59 × 44 × 77 см</p></article></div></section></div></section></main>
+<section class="block"><h2>Список мебели</h2><div class="catalog-stack"><section class="catalog-group"><h3>Гостиная</h3><div class="products"><article class="product"><img src="img/item-1.jpg" alt="Диван-кровать Alberta Togo" width="700" height="265" class="product-photo"><h4><span class="number">1</span><span>Диван-кровать Alberta Togo</span></h4><p class="product-code">DD-5796</p><p class="product-size">226 × 102 × 88 см, раскладной, спальное место 140 × 192, оливковая ткань</p></article><article class="product"><img src="img/item-2.jpg" alt="ТВ-тумба" width="700" height="155" class="product-photo"><h4><span class="number">2</span><span>ТВ-тумба</span></h4><p class="product-code">DD-7479</p><p class="product-size">229 × 54 × 35 см</p></article></div></section><section class="catalog-group"><h3>Столовая</h3><div class="products"><article class="product"><img src="img/item-3.jpg" alt="Обеденный стол Cattelan Pedro Drive" width="700" height="306" class="product-photo"><h4><span class="number">3</span><span>Обеденный стол Cattelan Pedro Drive</span></h4><p class="product-code">DD-9797</p><p class="product-size">140 × 80 × 75 см, раздвижной до 190 см, графит, лёгкий стальной каркас</p></article><article class="product"><img src="img/item-4.jpg" alt="Обеденный стул" width="300" height="450" class="product-photo"><h4><span class="number">4</span><span>Обеденный стул</span></h4><p class="product-code">DN-077</p><p class="product-size">50 × 54,5 × 80 см</p></article></div></section><section class="catalog-group"><h3>Спальня</h3><div class="products"><article class="product"><img src="img/item-5.jpg" alt="Кровать Désirée Vanity" width="700" height="382" class="product-photo"><h4><span class="number">5</span><span>Кровать Désirée Vanity</span></h4><p class="product-code">DD-14584</p><p class="product-size">172 × 212 × 92 см, мягкое изголовье, ящик для белья с подъёмным механизмом</p></article><article class="product"><img src="img/item-6.jpg" alt="Прикроватная тумба" width="455" height="460" class="product-photo"><h4><span class="number">6</span><span>Прикроватная тумба</span></h4><p class="product-code">PB-222</p><p class="product-size">54 × 40 × 51 см</p></article><article class="product"><img src="img/item-7.jpg" alt="Туалетный столик" width="410" height="460" class="product-photo"><h4><span class="number">7</span><span>Туалетный столик</span></h4><p class="product-code">PB-174</p><p class="product-size">120 × 47 × 78 см, с зеркалом и пуфом</p></article></div></section><section class="catalog-group"><h3>Вторая комната</h3><div class="products"><article class="product"><img src="img/item-8.jpg" alt="Кровать" width="416" height="184" class="product-photo"><h4><span class="number">8</span><span>Кровать</span></h4><p class="product-code">DD-5832</p><p class="product-size">97 × 196 × 36 см, с ящиком для белья, под матрас 90 × 190</p></article><article class="product"><img src="img/item-9.jpg" alt="Письменный стол" width="631" height="429" class="product-photo"><h4><span class="number">9</span><span>Письменный стол</span></h4><p class="product-code">DD-2919</p><p class="product-size">120 × 55 × 75 см</p></article><article class="product"><img src="img/item-10.jpg" alt="Стул к письменному столу" width="557" height="597" class="product-photo"><h4><span class="number">10</span><span>Стул к письменному столу</span></h4><p class="product-code">AR-065</p><p class="product-size">59 × 44 × 77 см</p></article></div></section></div></section></main>
 <script>
 (() => {
     const root = document.querySelector(".apartment");
@@ -1392,5 +1437,6 @@ html.v3d-locked body {
     }
 })();
 </script>
+<script src="swap.js" defer></script>
 
 </body></html>

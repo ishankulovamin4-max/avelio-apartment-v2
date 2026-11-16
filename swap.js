@@ -179,6 +179,19 @@
             setVars(comb, { ...band, "--shape": cssUrl(file(t, "shape", run.code)) });
             for (const el of [gap, comb]) anim(run, el, { "--p": ["0%", pct(reach + .12)] }, bandMove);
         }
+        const under = t.shown;
+        if (rich && frontUrl && under) {
+            const cut = "linear-gradient(90deg, #000 calc(var(--o) - var(--p)), transparent calc(var(--o) - var(--p)), "
+                + "transparent calc(var(--o) + var(--p)), #000 calc(var(--o) + var(--p)))";
+            under.style.setProperty("--o", pct(o));
+            for (const pre of ["-webkit-", ""]) {
+                under.style.setProperty(`${pre}mask-image`, `${backUrl}, ${cut}`);
+                under.style.setProperty(`${pre}mask-size`, "100% 100%, 100% 100%");
+                under.style.setProperty(`${pre}mask-repeat`, "no-repeat");
+            }
+            anim(run, under, { "--p": ["0%", pct(reach + .12)] }, { duration: SPREAD * (reach + .12), delay: D * .32, easing: "linear" });
+            run.under = under;
+        }
     }
 
     /* Смена на одном слое. Новый кусок ложится поверх, нижние снимаются только когда верхний встал полностью. */
@@ -215,7 +228,11 @@
         const at = t.runs.indexOf(run);
         if (at < 0) return;
         strip(run, false);
-        if (at < t.runs.length - 1) return;   // выше идёт другая смена, этот кусок пока подложка
+        if (at < t.runs.length - 1) {
+            // Этот кусок встал целиком, старый под ним больше не нужен: без маски он снова проступил бы там, где этот прозрачен.
+            if (run.under && run.under === t.shown) run.under.style.visibility = "hidden";
+            return;   // выше идёт другая смена, этот кусок пока подложка
+        }
         t.runs.slice(0, at).forEach((r) => strip(r, true));
         if (t.shown) t.shown.remove();
         t.shown = run.layer;

@@ -223,6 +223,7 @@
         t.runs.length = 0;
         t.zone.removeAttribute("data-busy");
         rest(t.scene, t.scene.groupOf[t.slot]);
+        revealOver(t.scene);
         armIdle();
     }
 
@@ -310,17 +311,52 @@
         }
     }
 
+    // Прячем всю зону over: и текущий кусок, и все прогоны, и контур.
+    function hideOver(sc) {
+        const tracks = sc.tracks.filter((t) => t.over);
+        if (!tracks.length) return false;
+        sc.overPending = (sc.overPending || 0) + 1;
+        sc.overHidden = true;
+        tracks.forEach((t) => {
+            if (t.overFade) t.overFade.cancel();
+            t.overFade = null;
+            t.zone.style.opacity = "0";
+        });
+        return true;
+    }
+    function revealOver(sc) {
+        if (!sc.overHidden || sc.overPending || sc.tracks.some((t) => t.runs.length)) return;
+        sc.overHidden = false;
+        sc.tracks.filter((t) => t.over).forEach((t) => {
+            // layerOf() уже дождалась decode(); land()/rest() оставили штатное состояние.
+            t.zone.style.removeProperty("opacity");
+            const a = t.zone.animate({ opacity: [0, 1] }, { duration: 150, easing: "ease" });
+            t.overFade = a;
+            a.finished.then(() => {
+                if (t.overFade === a) t.overFade = null;
+            }).catch(() => {});
+        });
+    }
+
     async function change(sc, slot, code, how) {
-        const group = sc.groupOf[slot];
-        const own = sc.bySlot[slot];
-        const others = group.slots.filter((s) => s !== slot).flatMap((s) => sc.bySlot[s]);
-        await Promise.all(variantLoads(sc, slot, code));
-        const layers = await Promise.all(own.map((t) => layerOf(t, code)));
-        const under = group.active ? [] : await Promise.all(others.map((t) => layerOf(t, topCode(t))));
-        if (wanted[slot] !== code) return;
-        if (!group.active) activate(sc, group, others, under);
-        own.forEach((t, i) => { if (code !== topCode(t)) start(t, code, layers[i], how); });
-        preload(sc);
+        const over = hideOver(sc);
+        try {
+            const group = sc.groupOf[slot];
+            const own = sc.bySlot[slot];
+            const others = group.slots.filter((s) => s !== slot).flatMap((s) => sc.bySlot[s]);
+            await Promise.all(variantLoads(sc, slot, code));
+            const layers = await Promise.all(own.map((t) => layerOf(t, code)));
+            const under = group.active ? [] : await Promise.all(others.map((t) => layerOf(t, topCode(t))));
+            if (wanted[slot] !== code) return;
+            if (!group.active) activate(sc, group, others, under);
+            own.forEach((t, i) => { if (code !== topCode(t)) start(t, code, layers[i], how); });
+            preload(sc);
+        } finally {
+            if (over) {
+                sc.overPending--;
+                revealOver(sc);
+            }
+        }
     }
 
     function showWait(sc, text) {
@@ -543,7 +579,7 @@
 
         for (const layer of v.layers) {
             const b = layer.box;
-            const t = { scene: sc, view, id: layer.id, slot: layer.slot, box: b, shown: null, shownCode: slots[layer.slot].options[0].code, runs: [], sweep: 1 };
+            const t = { scene: sc, view, id: layer.id, slot: layer.slot, box: b, over: Boolean(layer.over), shown: null, shownCode: slots[layer.slot].options[0].code, runs: [], sweep: 1 };
             t.zone = el("div", "swap-zone");
             Object.assign(t.zone.style, { left: pct(b[0]), top: pct(b[1]), width: pct(b[2] - b[0]), height: pct(b[3] - b[1]) });
             t.outline = el("div", "swap-fx swap-outline");
